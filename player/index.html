@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音声ファイル再生アプリ</title>
+    <style>
+        /* 全体のスタイル */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        /* コンテナのスタイル */
+        .container {
+            display: flex;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* タイトルセクション */
+        .title-section {
+            width: 200px;
+            margin-right: 20px;
+            text-align: left;
+        }
+
+        h1 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* ファイル入力のスタイル */
+        #audioFileInput {
+            display: none;
+        }
+
+        /* カスタムボタンのスタイル */
+        .custom-button {
+            display: inline-block;
+            padding: 10px 15px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 10px; /* ボタン間の隙間 */
+        }
+
+        .custom-button:hover {
+            background-color: #45a049;
+        }
+
+        /* 再生モードのトグルスイッチ */
+        .playback-options {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toggle-container {
+            margin-bottom: 10px;
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            color: #333;
+            display: inline-block;
+            cursor: pointer;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background-color: #eee;
+            transition: background-color 0.3s, color 0.3s;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .toggle-label.selected {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #4CAF50;
+        }
+
+        .toggle-label.disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        /* 音声リストのスタイル */
+        .audio-list {
+            width: calc(100% - 220px);
+            text-align: left;
+        }
+
+        .audio-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .audio-name {
+            font-size: 14px;
+            color: #333;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 音量調整スライダーのスタイル */
+        .volume-control {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .volume-label {
+            margin-right: 10px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-section">
+            <h1>音声ファイル再生</h1>
+            <label for="audioFileInput" class="custom-button">ファイルを選択</label>
+            
+            <!-- 再生モードのオプション -->
+            <div class="playback-options">
+                <span class="toggle-label selected" data-mode="single">1つの音声をループ</span>
+                <span class="toggle-label" data-mode="no-loop">ループしない</span>
+                <span class="toggle-label" data-mode="sequential">順番にループ</span>
+                <span class="toggle-label" data-mode="random">ランダム再生</span>
+            </div>
+
+            <!-- 音量調整スライダー -->
+            <div class="volume-control">
+                <span class="volume-label">音量:</span>
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+            </div>
+        </div>
+
+        <!-- 音声リスト -->
+        <div class="audio-list" id="audioList"></div>
+    </div>
+
+    <input type="file" id="audioFileInput" accept="audio/*" multiple>
+
+    <script>
+        const audioFileInput = document.getElementById('audioFileInput');
+        const audioList = document.getElementById('audioList');
+        const toggleLabels = document.querySelectorAll('.toggle-label');
+        const volumeSlider = document.getElementById('volumeSlider');
+        let audioFiles = [];
+        let audioElements = [];
+        let currentIndex = 0;
+        let playbackMode = 'single';
+
+        // 許可されたファイル形式
+        const allowedExtensions = ['mp3', 'wav', 'aac', 'm4a'];
+
+        // ファイルが選択されたときの処理
+        audioFileInput.addEventListener('change', (event) => {
+            const files = Array.from(event.target.files);
+            audioFiles = files.filter(file => {
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                return allowedExtensions.includes(fileExtension);
+            });
+
+            // 音声リストを表示
+            displayAudioList();
+
+            // ファイルが複数の場合は「順番にループ」を選択
+            if (audioFiles.length > 1) {
+                setPlaybackMode('sequential');
+            }
+
+            // 1つの音声ファイルの場合は、他の再生モードを無効にする
+            toggleLabels.forEach(label => {
+                label.classList.toggle('disabled', audioFiles.length === 1 && label.dataset.mode !== 'single' && label.dataset.mode !== 'no-loop');
+            });
+
+            // 最初の音声を再生
+            if (audioFiles.length > 0) {
+                currentIndex = 0;
+                playAudioFile(currentIndex);
+            }
+        });
+
+        // 音量調整の処理
+        volumeSlider.addEventListener('input', (event) => {
+            const volume = event.target.value;
+            audioElements.forEach(audio => {
+                audio.volume = volume;
+            });
+        });
+
+        // 再生モードのトグル処理
+        toggleLabels.forEach(label => {
+            label.addEventListener('click', () => {
+                if (!label.classList.contains('disabled')) {
+                    setPlaybackMode(label.dataset.mode);
+                }
+            });
+        });
+
+        function setPlaybackMode(mode) {
+            playbackMode = mode;
+            toggleLabels.forEach(label => {
+                label.classList.toggle('selected', label.dataset.mode === mode);
+            });
+        }
+
+        // 音声リストを表示する関数
+        function displayAudioList() {
+            audioList.innerHTML = '';
+            audioElements = [];
+
+            audioFiles.forEach((file, index) => {
+                const audioURL = URL.createObjectURL(file);
+                const audioItem = document.createElement('div');
+                audioItem.classList.add('audio-item');
+                audioItem.innerHTML = `
+                    <span class="audio-name">${file.name}</span>
+                    <audio controls src="${audioURL}" data-index="${index}"></audio>
+                `;
+                audioList.appendChild(audioItem);
+
+                // 各オーディオ要素をリストに追加
+                const audioElement = audioItem.querySelector('audio');
+                audioElements.push(audioElement);
+
+                // 終了イベントのリスナーを追加
+                audioElement.addEventListener('ended', () => handleAudioEnd(index));
+
+                // 再生が開始されたときの処理
+                audioElement.addEventListener('play', () => handleAudioPlay(index));
+            });
+        }
+
+        // 再生終了時の処理
+        function handleAudioEnd(index) {
+            if (playbackMode === 'single') {
+                playAudioFile(index);
+            } else if (playbackMode === 'sequential') {
+                currentIndex = (index + 1) % audioFiles.length;
+                playAudioFile(currentIndex);
+            } else if (playbackMode === 'random') {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * audioFiles.length);
+                } while (newIndex === index);
+                currentIndex = newIndex;
+                playAudioFile(currentIndex);
+            }
+        }
+
+        // 音声が再生されたときの処理
+        function handleAudioPlay(index) {
+            if (playbackMode === 'single' && index !== currentIndex) {
+                audioElements[currentIndex].pause();
+                audioElements[currentIndex].currentTime = 0;
+            }
+            currentIndex = index;
+        }
+
+        // 音声を再生する関数
+        function playAudioFile(index) {
+            if (audioElements[index]) {
+                // 他のオーディオ要素を停止
+                audioElements.forEach((audio, i) => {
+                    if (i !== index) {
+                        audio.pause();
+                        audio.currentTime = 0;
+                    }
+                });
+
+                audioElements[index].play();
+                currentIndex = index;
+            }
+        }
+    </script>
+</body>
+</html>
