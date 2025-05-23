@@ -1,1 +1,1 @@
-https://wsn0672.f5.siの中身
+https://wsn0672.f5.si/ の中身
