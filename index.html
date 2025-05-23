@@ -1,47 +1,58 @@
 <!DOCTYPE html>
 <html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <title>
-        </title>
-        <meta name="wsn0672公式サイト" content="wsn0672公式サイト">
+<head>
+    <meta charset="UTF-8">
+    <title>wsn0672の自家製サーバー</title>
+    <meta name="description" content="wsn0672の自家製Webサーバー">
 
-        <link rel="stylesheet" href="https://umpkg.com/ress/dist/ress.min.css">
-        <link rel="stylesheet" href="style.css">
-        <script src="script.js" defer></script>
-    </head>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
-    <body>
-        <h1 id="title">
-            自家製サーバーテスト
-        </h1>
-        <h3 id="one">
-            現在、このサーバーは稼働中です。
-        </h3>
-        <h4 id="two">
-            このサーバーはwsn0672がRaspberry Piで作った自家製webサーバーです。
-        </h4>
-        <h4 id="three">
-            <a href="http://wsn0672.f5.si">
-                ここ
-            </a>
-            をクリックしてリロード
-        </h4>
-        <h4 id="four">
-            【wsn0672が作った作品】
-        <a href=http://wsn0672.f5.si/appel>
-                Appel
-        </a>
-        <a href=http://wsn0672.f5.si/bitlocker>
-                ニセBitLocker
-        </a>
-        <a href=http://wsn0672.f5.si/angou>
-                文字列暗号化ソフト
-        </a>
-        <a href=http://wsn0672.f5.si/chikachika>
-                目眩し
-        </a>
-        </h4>
+    <!-- リセットCSS -->
+    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+
+    <!-- 自作CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <main class="container">
+        <h1 id="dynamic-title"></h1>
+        <p class="status">現在、このサーバーは <span class="active">稼働中</span> です。</p>
+        <p class="desc">このサーバーは <strong>wsn0672</strong> が <code>Raspberry Pi</code> で構築した自家製Webサーバーです。</p>
         
-    </body>
+        <div class="reload">
+            <a href="http://wsn0672.f5.si" class="button">ここをクリックしてリロード</a>
+        </div>
+
+        <section class="works">
+            <h2>🔧 便利ツールなど</h2>
+            <ul>
+                <li><a href="http://wsn0672.f5.si/appel">🍎 Appel</a></li>
+                <li><a href="http://wsn0672.f5.si/bitlocker">🧿 ニセBitLocker</a></li>
+                <li><a href="http://wsn0672.f5.si/angou">🔐 文字列暗号化ソフト</a></li>
+                <li><a href="http://wsn0672.f5.si/chikachika">⚡ 目眩し</a></li>
+            </ul>
+        </section>
+    <section class="profile">
+    <h2>👤 wsn0672について</h2>
+    <p>
+        中学生クリエイター、ガジェット好きでApple信者🍎<br>
+        自家製サーバーをRaspberry Piで構築し、Web開発や電子工作を楽しんでるらしい。<br>
+        気になる人は下のリンクもチェックしてくれ！
+    </p>
+
+    <div class="social-links">
+        <a href="https://x.com/wsn0672" target="_blank" class="sns-link">📱 X (旧Twitter)</a>
+        <a href="https://qiita.com/wsn0672" target="_blank" class="sns-link">💡 Qiita</a>
+    </div>
+</section>
+    </main>
+    <footer id="client-info" class="client-info">
+    <h3>🔍 クライアント情報</h3>
+    <p>IPアドレス: <span id="ip">取得中...</span></p>
+    <p>ブラウザ: <span id="browser">取得中...</span></p>
+</footer>
+</body>
 </html>
