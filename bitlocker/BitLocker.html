@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BitLocker ロック解除画面</title>
+    <style>
+        body {
+            background-color: #0163ca;
+            color: white;
+            font-family: "Segoe UI", Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding-left: 20px; /* 左寄せ */
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 2em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .description {
+            font-size: 1em;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .input-box {
+            width: 90%;
+            padding: 15px;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            border: 2px solid white;
+            border-radius: 0; /* 四角形にする */
+            background-color: white;
+            color: black;
+        }
+        .links {
+            font-size: 0.9em;
+            color: #87cefa;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            width: 90%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 2px solid white;
+            border-radius: 0; /* 四角形にする */
+            background-color: transparent;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #003366;
+        }
+        .bottom-links {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding-left: 20px;
+            box-sizing: border-box;
+        }
+        .bottom-link {
+            font-size: 1em;
+            color: #87cefa;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>BitLocker</h1>
+    <p class="description">使用できる状態に戻すには回復キーを入力してください (キーボード レイアウト: 日本語)</p>
+    <input type="text" class="input-box" placeholder="回復キーを入力" maxlength="48" id="recoveryKey">
+    <div class="links">
+        (キーを識別する) 回復キー ID: 612866DC-374D-4E20-97F9-005FC2589957<br>
+        このキーを取得する方法の詳細については、別のPC またはモバイル デバイスから <a href="https://aka.ms/recoverykeyfaq" target="_blank" style="color: #87cefa;">aka.ms/recoverykeyfaq</a> にアクセスしてください。<br>
+        <br>ドライブ ラベル: TESTVM C: 2022/09/02
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="unlock()">続行</button>
+    </div>
+    <div class="bottom-links">
+        <span class="bottom-link">キーボード レイアウトの変更</span>
+        <span class="bottom-link">このドライブをスキップする</span>
+    </div>
+
+    <script>
+        function unlock() {
+            const input = document.getElementById("recoveryKey").value;
+            if (input.length === 48) {
+                alert("ロックが解除されました。");
+            } else {
+                alert("回復キーが無効です。再度確認してください。");
+            }
+        }
+    </script>
+</body>
+</html>

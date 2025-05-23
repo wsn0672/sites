@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文字列暗号化ツール</title>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-size: 24px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        #error {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+        }
+
+        #copyBtn {
+            display: none;
+        }
+
+        .help {
+            margin-top: 10px;
+            cursor: pointer;
+            color: #007BFF;
+        }
+
+        .help-text {
+            display: none;
+            text-align: left;
+            background-color: #e7f3ff;
+            padding: 10px;
+            border: 1px solid #007BFF;
+            border-radius: 4px;
+            margin-top: 10px;
+            animation: slideDown 0.5s ease-in-out;
+        }
+
+        .password-toggle {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .password-toggle input[type="checkbox"] {
+            margin-left: 10px;
+        }
+
+        @keyframes slideDown {
+            from { height: 0; opacity: 0; }
+            to { height: auto; opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>文字列暗号化ツール</h1>
+        
+        <input type="text" id="textToEncrypt" placeholder="暗号化する文字列を入力">
+
+        <div class="password-toggle">
+            <input type="password" id="password" placeholder="パスワードを入力">
+            <label><input type="checkbox" id="showPassword" onclick="togglePassword()"> パスワードを表示</label>
+        </div>
+
+        <button onclick="encrypt()">暗号化</button>
+        <button onclick="decrypt()">復号化</button>
+        <button id="copyBtn" onclick="copyToClipboard()">クリップボードにコピー</button>
+
+        <div id="result"></div>
+        <div id="error"></div>
+
+        <p class="help" onclick="toggleHelp()">ヘルプを表示/非表示</p>
+        <div class="help-text" id="helpText">
+            <strong>使い方：</strong><br>
+            1. 暗号化する文字列とパスワードを入力します。<br>
+            2. 「暗号化」ボタンを押して暗号化された文字列を表示します。<br>
+            3. 「復号化」ボタンを押して暗号化された文字列を元に戻します。<br>
+            4. 暗号化された文字列をクリップボードにコピーするには「クリップボードにコピー」ボタンを押します。
+        </div>
+    </div>
+
+    <script>
+        function encrypt() {
+            var text = document.getElementById('textToEncrypt').value;
+            var password = document.getElementById('password').value;
+            var errorDiv = document.getElementById('error');
+            errorDiv.style.display = "none";
+            
+            if (text && password) {
+                var encrypted = CryptoJS.AES.encrypt(text, password).toString();
+                document.getElementById('result').textContent = '暗号化された文字列：' + encrypted;
+                document.getElementById('copyBtn').style.display = 'inline-block';
+            } else {
+                errorDiv.textContent = '文字列とパスワードを入力してください。';
+                errorDiv.style.display = 'block';
+                document.getElementById('copyBtn').style.display = 'none';
+            }
+        }
+
+        function decrypt() {
+            var encryptedText = document.getElementById('textToEncrypt').value;
+            var password = document.getElementById('password').value;
+            var errorDiv = document.getElementById('error');
+            errorDiv.style.display = "none";
+            
+            if (encryptedText && password) {
+                try {
+                    var decrypted = CryptoJS.AES.decrypt(encryptedText, password).toString(CryptoJS.enc.Utf8);
+                    if (!decrypted) throw new Error("復号化エラー");
+                    document.getElementById('result').textContent = '復号化された文字列：' + decrypted;
+                    document.getElementById('copyBtn').style.display = 'none';
+                } catch (e) {
+                    errorDiv.textContent = '復号化に失敗しました。正しいパスワードを入力してください。';
+                    errorDiv.style.display = 'block';
+                }
+            } else {
+                errorDiv.textContent = '暗号化された文字列とパスワードを入力してください。';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function copyToClipboard() {
+            var resultText = document.getElementById('result').textContent.replace('暗号化された文字列：', '');
+            if (resultText) {
+                navigator.clipboard.writeText(resultText).then(() => {
+                    alert('クリップボードにコピーされました！');
+                }).catch(err => {
+                    alert('コピーに失敗しました: ' + err);
+                });
+            }
+        }
+
+        function toggleHelp() {
+            var helpText = document.getElementById('helpText');
+            if (helpText.style.display === "none" || helpText.style.display === "") {
+                helpText.style.display = "block";
+            } else {
+                helpText.style.display = "none";
+            }
+        }
+
+        function togglePassword() {
+            var passwordField = document.getElementById('password');
+            var checkbox = document.getElementById('showPassword');
+            if (checkbox.checked) {
+                passwordField.type = 'text';
+            } else {
+                passwordField.type = 'password';
+            }
+        }
+    </script>
+</body>
+</html>
