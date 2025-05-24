@@ -59,7 +59,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 <body>
     <header>
         <h1>シークレットページ</h1>
-        <a href="/login/logout.php" class="logout-btn">ログアウト</a>
+        <a href="/login/secret/logout.php" class="logout-btn">ログアウト</a>
     </header>
     <main>
         <p>ようこそ、<strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong>さん！</p>
