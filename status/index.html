@@ -12,9 +12,18 @@
     <main class="dashboard">
         <h1>⚙️ サーバーステータス</h1>
         <div class="chart-area">
-            <canvas id="cpuChart"></canvas>
-            <canvas id="memChart"></canvas>
-            <canvas id="diskChart"></canvas>
+            <div class="chart-block">
+    <canvas id="cpuChart"></canvas>
+    <p class="label">CPU</p>
+</div>
+<div class="chart-block">
+    <canvas id="memChart"></canvas>
+    <p class="label">メモリ</p>
+</div>
+<div class="chart-block">
+    <canvas id="diskChart"></canvas>
+    <p class="label">ディスク</p>
+</div>
         </div>
     </main>
 </body>
