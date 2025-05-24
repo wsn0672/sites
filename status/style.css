@@ -28,14 +28,24 @@ h1 {
 .chart-area {
     display: flex;
     flex-wrap: wrap;
-    gap: 2rem;
+    gap: 1rem;
     justify-content: center;
+    align-items: center;
 }
 
 canvas {
     background-color: #222;
     padding: 1rem;
     border-radius: 12px;
-    width: 250px;
-    height: 250px;
+    width: 200px !important;
+    height: 200px !important;
+    max-width: 100%;
+    max-height: 100%;
+    box-sizing: border-box;
+}
+@media screen and (max-width: 600px) {
+    canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
 }
