@@ -6,12 +6,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 }
 $error = $_GET['error'] ?? '';
 ?>
-<?php
-if ($error === 'locked'): ?>
-    <p class="error">ロック中です。しばらくしてから再試行してください。</p>
-<?php elseif ($error): ?>
-    <p class="error">ログインに失敗しました。もう一度お試しください。</p>
-<?php endif; ?>
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -69,25 +63,23 @@ if ($error === 'locked'): ?>
             background-color: #00dddd;
         }
         .error {
-            margin-top: 1rem;
             color: #ff4444;
+            margin-top: 1rem;
             text-align: center;
             font-weight: bold;
         }
-        .error {
-    color: #ff4444;
-    margin-top: 1rem;
-    text-align: center;
-    font-weight: bold;
-}
     </style>
 </head>
 <body>
     <div class="login-box">
         <h1>ログイン</h1>
-        <?php if ($error): ?>
-            <p class="error">ちげぇよバカ</p>
+
+        <?php if ($error === 'locked'): ?>
+            <p class="error">ロック中です。しばらくしてから再試行してください。</p>
+        <?php elseif ($error): ?>
+            <p class="error">ログインに失敗しました。もう一度お試しください。</p>
         <?php endif; ?>
+
         <form action="authenticate.php" method="post">
             <label for="username">ユーザー名</label>
             <input type="text" id="username" name="username" required autocomplete="username" />
