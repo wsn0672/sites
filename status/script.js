@@ -14,11 +14,13 @@ function createChart(ctx, label, color) {
             }]
         },
         options: {
+            responsive: false, // ← これが超重要！
+            maintainAspectRatio: false, // 高さ制御もCSS任せに
             plugins: {
                 legend: { display: false },
                 tooltip: { enabled: false }
             },
-            cutout: '70%',
+            cutout: '70%'
         }
     });
 }
