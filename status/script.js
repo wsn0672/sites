@@ -14,7 +14,7 @@ const centerTextPlugin = {
         ctx.fillStyle = '#00ffff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(`${value.toFixed(1)}%`, width / 2, height / 2);
+        ctx.fillText(`${value.toFixed(3)}%`, width / 2, height / 2);
         ctx.restore();
     }
 };
