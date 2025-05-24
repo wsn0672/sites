@@ -16,8 +16,8 @@ if (isset($_SESSION['lock_until']) && $_SESSION['lock_until'] > $now) {
 
 // ユーザー一覧（仮）
 $valid_users = [
-    'admin' => 'password123',
-    'wsn0672' => 'supersecret'
+    'admin' => 'password',
+    'wsn0672' => 'hg94eq3-h'
 ];
 
 // 入力値
@@ -30,7 +30,7 @@ if (isset($valid_users[$username]) && $valid_users[$username] === $password) {
     $_SESSION['logged_in'] = true;
     $_SESSION['username'] = $username;
     unset($_SESSION['fail_count'], $_SESSION['lock_until']);
-    header('Location: /secret/');
+    header('Location: /login/secret/');
     exit;
 } else {
     // 失敗 → カウントアップ
