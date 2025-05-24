@@ -1,24 +1,48 @@
 <?php
 session_start();
 
-// ここでユーザー名・パスワードを設定（ハードコードOK、あとでDBも可）
+// 設定
+$maxAttempts = 5;
+$lockDuration = 15 * 60; // 15分（秒）
+
+// 現在時刻
+$now = time();
+
+// ロック中かチェック
+if (isset($_SESSION['lock_until']) && $_SESSION['lock_until'] > $now) {
+    header('Location: /login/?error=locked');
+    exit;
+}
+
+// ユーザー一覧（仮）
 $valid_users = [
-    'admin' => 'ghm45q0988gh8594r0pqg',  // 例: ユーザー名 admin パスワード password123
-    'wsn0672' => 'gheq349govh49g54qw' // 好きなユーザー名とパスワードに変えてOK
+    'admin' => 'password123',
+    'wsn0672' => 'supersecret'
 ];
 
-// POSTされた値を取得
+// 入力値
 $username = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
 
 // 認証チェック
 if (isset($valid_users[$username]) && $valid_users[$username] === $password) {
+    // 成功 → セッション初期化＆ログイン
     $_SESSION['logged_in'] = true;
     $_SESSION['username'] = $username;
-    header('Location: /login/secret/');
+    unset($_SESSION['fail_count'], $_SESSION['lock_until']);
+    header('Location: /secret/');
     exit;
 } else {
-    // 認証失敗はエラーつけてログイン画面に戻る
+    // 失敗 → カウントアップ
+    $_SESSION['fail_count'] = ($_SESSION['fail_count'] ?? 0) + 1;
+
+    if ($_SESSION['fail_count'] >= $maxAttempts) {
+        $_SESSION['lock_until'] = $now + $lockDuration;
+        unset($_SESSION['fail_count']);
+        header('Location: /login/?error=locked');
+        exit;
+    }
+
     header('Location: /login/?error=1');
     exit;
 }
