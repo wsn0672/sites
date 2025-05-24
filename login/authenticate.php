@@ -15,7 +15,7 @@ $password = $_POST['password'] ?? '';
 if (isset($valid_users[$username]) && $valid_users[$username] === $password) {
     $_SESSION['logged_in'] = true;
     $_SESSION['username'] = $username;
-    header('Location: /secret/');
+    header('Location: /login/secret/');
     exit;
 } else {
     // 認証失敗はエラーつけてログイン画面に戻る
